@@ -3,8 +3,8 @@
 ## Managing gym operations with traditional methods like paper records or spreadsheets is inefficient and error-prone, leading to data mismanagement and poor member experience.
 ## Solution
 
-/*Our Gym Membership Management System is a desktop application developed using C++ and MySQL (or Oracle). It aims to automate and streamline gym operations, enhancing efficiency and member satisfaction.
-Key Features*/
+/* Our Gym Membership Management System is a desktop application developed using C++ and MySQL (or Oracle). It aims to automate and streamline gym operations, enhancing efficiency and member satisfaction.
+Key Features */
 
     Membership Management:
         Manage registrations, updates, renewals, and membership types.
