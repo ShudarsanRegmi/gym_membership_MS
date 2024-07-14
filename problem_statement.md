@@ -5,6 +5,7 @@
 # Solution
 
 ## Our Gym Membership Management System is a desktop application developed using C++ and MySQL (or Oracle). It aims to automate and streamline gym operations, enhancing efficiency and member satisfaction.
+
 ### Key Features
 
 #### 1.Membership Management:
