@@ -6,6 +6,8 @@ To design the OOP model for your Gym Membership Management System, we can break 
 
 ![image](https://github.com/user-attachments/assets/51079478-a369-4474-ac7b-3988e0c26610)
 
+![image](https://github.com/user-attachments/assets/3e5f5ec8-79d1-4666-ac20-5bfb512da37c)
+
 
 #### **Member Class**
 - **Attributes:**
