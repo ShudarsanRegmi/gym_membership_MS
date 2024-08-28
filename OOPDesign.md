@@ -2,6 +2,11 @@ To design the OOP model for your Gym Membership Management System, we can break 
 
 ### 1. **Class Design**
 
+### UML Diagram
+
+![image](https://github.com/user-attachments/assets/51079478-a369-4474-ac7b-3988e0c26610)
+
+
 #### **Member Class**
 - **Attributes:**
   - `MemberID`
