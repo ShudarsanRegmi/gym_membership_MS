@@ -1,7 +1,3 @@
-Here is the markdown with improved formatting:
-
----
-
 # Problem Statement
 
 Managing gym operations with traditional methods like paper records or spreadsheets is inefficient and error-prone, leading to data mismanagement and poor member experience.
