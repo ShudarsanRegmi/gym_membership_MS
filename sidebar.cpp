@@ -64,6 +64,10 @@ Sidebar::Sidebar(QWidget *parent, QStackedWidget *stackedWidget) : QWidget(paren
     settingsPageButton->setIcon(QIcon(":/icons/settings.png"));
     settingsPageButton->setCursor(Qt::PointingHandCursor);
 
+    QPushButton *registerPageButton = new QPushButton("Register");
+    registerPageButton->setIcon(QIcon(":/icons/register.png"));
+    registerPageButton->setCursor(Qt::PointingHandCursor);
+
     // Add profile and buttons to the layout
     sidebarLayout->addWidget(profilePic);
     sidebarLayout->addWidget(profileName);
@@ -75,6 +79,7 @@ Sidebar::Sidebar(QWidget *parent, QStackedWidget *stackedWidget) : QWidget(paren
     sidebarLayout->addWidget(subscriptionButton);
     sidebarLayout->addWidget(adminPageButton);
     sidebarLayout->addWidget(settingsPageButton);
+    sidebarLayout->addWidget(registerPageButton);
     sidebarLayout->addStretch();  // Pushes buttons to the top
 
     // Apply the layout to the sidebar
@@ -116,10 +121,15 @@ Sidebar::Sidebar(QWidget *parent, QStackedWidget *stackedWidget) : QWidget(paren
         stackedWidget->setCurrentIndex(4);  // Switch to subscription page
     });
     connect(adminPageButton, &QPushButton::clicked, [=]() {
+        qDebug() << "admin page button clicked";
         stackedWidget->setCurrentIndex(5);  // Switch to admin page
     });
     connect(settingsPageButton, &QPushButton::clicked, [=]() {
         stackedWidget->setCurrentIndex(6);  // Switch to settings page
+    });
+    connect(registerPageButton, &QPushButton::clicked, [=] {
+        qDebug() << "register button clicked...";
+        stackedWidget->setCurrentIndex(7);
     });
 }
 

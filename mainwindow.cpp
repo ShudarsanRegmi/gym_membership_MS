@@ -9,10 +9,26 @@
 #include "pages/attendancepage.h"
 #include "pages/viewsubscription.h"
 #include "pages/scheduleclasspaage.h"
+#include "pages/registerpage.h"
+#include "pages/settingspage.h"
+#include "pages/adminpage.h"
+
+#include "databaseapi.h"
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+    // making database connection
+    DatabaseAPI *conn = new DatabaseAPI;
+    if (conn->connectToDatabase("127.0.0.1", "gym_mgmt", "shudarsan", "shudarsan@localhost")) {
+        qDebug() << "Connection to the database was successfull...";
+    }else {
+        qDebug() << "Connection to the database failed...";
+    }
+
+
+
     QWidget *centralWidget = new QWidget;
     QHBoxLayout *mainLayout = new QHBoxLayout;
 
@@ -41,6 +57,9 @@ MainWindow::MainWindow(QWidget *parent)
     AttendanceTracking *attendanceTrackingPage = new AttendanceTracking;
     ViewSubscription *viewSubscriptionPage = new ViewSubscription;
     ScheduleClasses *scheduleClassPage = new ScheduleClasses;
+    RegisterPage *registerPage = new RegisterPage;
+    SettingsPage *settingsPage = new SettingsPage;
+    AdminPage *adminPage = new AdminPage;
 
 
     // QWidget *studentsPage = new QWidget;
@@ -63,23 +82,26 @@ MainWindow::MainWindow(QWidget *parent)
     // scheduleClassPage->setLayout(scheduleClassLayout);
 
 
-    QWidget *adminPage = new QWidget;
-    QVBoxLayout *adminPageLayout = new QVBoxLayout;
-    adminPageLayout->addWidget(new QLabel("Admin Page..."));
-    adminPage->setLayout(adminPageLayout);
+    // QWidget *adminPage = new QWidget;
+    // QVBoxLayout *adminPageLayout = new QVBoxLayout;
+    // adminPageLayout->addWidget(new QLabel("Admin Page..."));
+    // adminPage->setLayout(adminPageLayout);
 
-    QWidget *settingsPage = new QWidget;
-    QVBoxLayout *settingsPageLayout = new QVBoxLayout;
-    settingsPageLayout->addWidget(new QLabel("Settings Page") );
+    // QWidget *settingsPage = new QWidget;
+    // QVBoxLayout *settingsPageLayout = new QVBoxLayout;
+    // settingsPageLayout->addWidget(new QLabel("Settings Page") );
 
     // Add pages to stackedWidget
-    stackedWidget->addWidget(homePage);
-    stackedWidget->addWidget(dashboard);
-    stackedWidget->addWidget(attendanceTrackingPage);
-    stackedWidget->addWidget(scheduleClassPage);
-    stackedWidget->addWidget(viewSubscriptionPage);
-    stackedWidget->addWidget(adminPage);
-    stackedWidget->addWidget(settingsPage);
+    stackedWidget->addWidget(homePage); //0
+    stackedWidget->addWidget(dashboard); // 1
+    stackedWidget->addWidget(attendanceTrackingPage); // 2
+    stackedWidget->addWidget(scheduleClassPage); // 3
+    stackedWidget->addWidget(viewSubscriptionPage); // 4
+    stackedWidget->addWidget(adminPage); // 5
+    stackedWidget->addWidget(settingsPage); // 6
+    stackedWidget->addWidget(registerPage); // 7
+
+
 
     // Add sidebar and central widget to the main layout
     mainLayout->addWidget(sidebar);         // Sidebar on the left
