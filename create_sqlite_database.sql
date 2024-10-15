@@ -1,3 +1,5 @@
+-- schema creation flies
+
 CREATE TABLE Users (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT NOT NULL,
