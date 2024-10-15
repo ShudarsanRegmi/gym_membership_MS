@@ -1,6 +1,8 @@
-#include "DatabaseAPI.h"
+#include "databaseapi.h"
 
-DatabaseAPI::DatabaseAPI(QObject *parent) : QObject(parent) {}
+DatabaseAPI::DatabaseAPI() {
+    db = QSqlDatabase::addDatabase("QSQLITE");
+}
 
 DatabaseAPI::~DatabaseAPI() {
     if (db.isOpen()) {
@@ -8,20 +10,18 @@ DatabaseAPI::~DatabaseAPI() {
     }
 }
 
-bool DatabaseAPI::connectToDatabase(const QString &host, const QString &dbName, const QString &user, const QString &password) {
-    db = QSqlDatabase::addDatabase("QMYSQL");
-    db.setHostName(host);
-    db.setDatabaseName(dbName);
-    db.setUserName(user);
-    db.setPassword(password);
+bool DatabaseAPI::connectToDatabase(const QString &dbname) {
+    db.setDatabaseName(dbname);
 
     if (!db.open()) {
-        qDebug() << "Database Error: " << db.lastError().text();
+        qDebug() << "Error: Could not open database." << db.lastError().text();
         return false;
     }
+
     return true;
 }
 
+// User-related operations
 bool DatabaseAPI::addUser(const QString &username, const QString &password, const QString &email, const QString &role) {
     QSqlQuery query;
     query.prepare("INSERT INTO Users (username, password, email, role) VALUES (?, ?, ?, ?)");
@@ -31,32 +31,41 @@ bool DatabaseAPI::addUser(const QString &username, const QString &password, cons
     query.addBindValue(role);
 
     if (!query.exec()) {
-        qDebug() << "Add User Error: " << query.lastError().text();
+        qDebug() << "Error adding user: " << query.lastError().text();
         return false;
     }
+
     return true;
 }
 
-QVector<QVariantMap> DatabaseAPI::getAllMembers() {
-    QVector<QVariantMap> members;
-    QSqlQuery query("SELECT * FROM Members");
+bool DatabaseAPI::authenticateUser(const QString &username, const QString &password) {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM Users WHERE username = ? AND password = ?");
+    query.addBindValue(username);
+    query.addBindValue(password);
 
-    while (query.next()) {
-        QVariantMap member;
-        member["member_id"] = query.value("member_id").toInt();
-        member["first_name"] = query.value("first_name").toString();
-        member["last_name"] = query.value("last_name").toString();
-        member["date_of_birth"] = query.value("date_of_birth").toDate();
-        member["phone_number"] = query.value("phone_number").toString();
-        member["membership_start_date"] = query.value("membership_start_date").toDate();
-        member["membership_end_date"] = query.value("membership_end_date").toDate();
-        members.append(member);
+    if (!query.exec()) {
+        qDebug() << "Error authenticating user: " << query.lastError().text();
+        return false;
     }
-    return members;
+
+    return query.next();
 }
 
-bool DatabaseAPI::addMember(int userId, const QString &firstName, const QString &lastName, const QDate &dob, const QString &phoneNumber,
-                            const QDate &membershipStart, const QDate &membershipEnd) {
+QSqlQuery DatabaseAPI::getUserDetails(int userId) {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM Users WHERE user_id = ?");
+    query.addBindValue(userId);
+
+    if (!query.exec()) {
+        qDebug() << "Error fetching user details: " << query.lastError().text();
+    }
+
+    return query;
+}
+
+// Member-related operations
+bool DatabaseAPI::addMember(int userId, const QString &firstName, const QString &lastName, const QDate &dob, const QString &phoneNumber, const QDate &startDate, const QDate &endDate) {
     QSqlQuery query;
     query.prepare("INSERT INTO Members (user_id, first_name, last_name, date_of_birth, phone_number, membership_start_date, membership_end_date) VALUES (?, ?, ?, ?, ?, ?, ?)");
     query.addBindValue(userId);
@@ -64,17 +73,82 @@ bool DatabaseAPI::addMember(int userId, const QString &firstName, const QString 
     query.addBindValue(lastName);
     query.addBindValue(dob);
     query.addBindValue(phoneNumber);
-    query.addBindValue(membershipStart);
-    query.addBindValue(membershipEnd);
+    query.addBindValue(startDate);
+    query.addBindValue(endDate);
 
     if (!query.exec()) {
-        qDebug() << "Add Member Error: " << query.lastError().text();
+        qDebug() << "Error adding member: " << query.lastError().text();
         return false;
     }
+
     return true;
 }
 
-bool DatabaseAPI::addAttendance(int memberId, const QDate &date, const QString &status) {
+bool DatabaseAPI::updateMember(int memberId, const QMap<QString, QVariant> &updatedData) {
+    QString queryString = "UPDATE Members SET ";
+    QStringList keys = updatedData.keys();
+
+    for (int i = 0; i < keys.size(); ++i) {
+        queryString += keys[i] + " = ?";
+        if (i < keys.size() - 1) queryString += ", ";
+    }
+
+    queryString += " WHERE member_id = ?";
+
+    QSqlQuery query;
+    query.prepare(queryString);
+
+    for (const auto &key : keys) {
+        query.addBindValue(updatedData[key]);
+    }
+
+    query.addBindValue(memberId);
+
+    if (!query.exec()) {
+        qDebug() << "Error updating member: " << query.lastError().text();
+        return false;
+    }
+
+    return true;
+}
+
+QSqlQuery DatabaseAPI::getMemberDetails(int memberId) {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM Members WHERE member_id = ?");
+    query.addBindValue(memberId);
+
+    if (!query.exec()) {
+        qDebug() << "Error fetching member details: " << query.lastError().text();
+    }
+
+    return query;
+}
+
+QSqlQuery DatabaseAPI::getAllMembers() {
+    QSqlQuery query("SELECT * FROM Members");
+
+    if (!query.exec()) {
+        qDebug() << "Error fetching all members: " << query.lastError().text();
+    }
+
+    return query;
+}
+
+bool DatabaseAPI::deleteMember(int memberId) {
+    QSqlQuery query;
+    query.prepare("DELETE FROM Members WHERE member_id = ?");
+    query.addBindValue(memberId);
+
+    if (!query.exec()) {
+        qDebug() << "Error deleting member: " << query.lastError().text();
+        return false;
+    }
+
+    return true;
+}
+
+// Attendance-related operations
+bool DatabaseAPI::markAttendance(int memberId, const QDate &date, const QString &status) {
     QSqlQuery query;
     query.prepare("INSERT INTO Attendance (member_id, date, status) VALUES (?, ?, ?)");
     query.addBindValue(memberId);
@@ -82,51 +156,157 @@ bool DatabaseAPI::addAttendance(int memberId, const QDate &date, const QString &
     query.addBindValue(status);
 
     if (!query.exec()) {
-        qDebug() << "Add Attendance Error: " << query.lastError().text();
+        qDebug() << "Error marking attendance: " << query.lastError().text();
         return false;
     }
+
     return true;
 }
 
-bool DatabaseAPI::addPayment(int memberId, double amount, const QDate &paymentDate, const QString &method) {
+QSqlQuery DatabaseAPI::getAttendanceRecordsByMember(int memberId) {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM Attendance WHERE member_id = ?");
+    query.addBindValue(memberId);
+
+    if (!query.exec()) {
+        qDebug() << "Error fetching attendance records: " << query.lastError().text();
+    }
+
+    return query;
+}
+
+QSqlQuery DatabaseAPI::getAttendanceByDate(const QDate &date) {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM Attendance WHERE date = ?");
+    query.addBindValue(date);
+
+    if (!query.exec()) {
+        qDebug() << "Error fetching attendance by date: " << query.lastError().text();
+    }
+
+    return query;
+}
+
+// Payment-related operations
+bool DatabaseAPI::addPayment(int memberId, double amount, const QDate &date, const QString &method) {
     QSqlQuery query;
     query.prepare("INSERT INTO Payments (member_id, amount, payment_date, payment_method) VALUES (?, ?, ?, ?)");
     query.addBindValue(memberId);
     query.addBindValue(amount);
-    query.addBindValue(paymentDate);
+    query.addBindValue(date);
     query.addBindValue(method);
 
     if (!query.exec()) {
-        qDebug() << "Add Payment Error: " << query.lastError().text();
+        qDebug() << "Error adding payment: " << query.lastError().text();
         return false;
     }
+
     return true;
 }
 
-bool DatabaseAPI::addClass(const QString &className, const QString &instructor, const QDateTime &scheduleTime) {
+QSqlQuery DatabaseAPI::getPaymentRecords(int memberId) {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM Payments WHERE member_id = ?");
+    query.addBindValue(memberId);
+
+    if (!query.exec()) {
+        qDebug() << "Error fetching payment records: " << query.lastError().text();
+    }
+
+    return query;
+}
+
+// Class-related operations
+bool DatabaseAPI::addClass(const QString &name, const QString &instructor, const QDateTime &scheduleTime) {
     QSqlQuery query;
     query.prepare("INSERT INTO Classes (class_name, instructor, schedule_time) VALUES (?, ?, ?)");
-    query.addBindValue(className);
+    query.addBindValue(name);
     query.addBindValue(instructor);
     query.addBindValue(scheduleTime);
 
+
     if (!query.exec()) {
-        qDebug() << "Add Class Error: " << query.lastError().text();
+        qDebug() << "Error adding class: " << query.lastError().text();
         return false;
     }
+
     return true;
 }
 
-bool DatabaseAPI::registerClass(int memberId, int classId, const QDate &registrationDate) {
+QSqlQuery DatabaseAPI::getAllClasses() {
+    QSqlQuery query("SELECT * FROM Classes");
+
+    if (!query.exec()) {
+        qDebug() << "Error fetching all classes: " << query.lastError().text();
+    }
+
+    return query;
+}
+
+QSqlQuery DatabaseAPI::getClassDetails(int classId) {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM Classes WHERE class_id = ?");
+    query.addBindValue(classId);
+
+    if (!query.exec()) {
+        qDebug() << "Error fetching class details: " << query.lastError().text();
+    }
+
+    return query;
+}
+
+// Class registration-related operations
+bool DatabaseAPI::registerForClass(int memberId, int classId) {
     QSqlQuery query;
     query.prepare("INSERT INTO Class_Registrations (member_id, class_id, registration_date) VALUES (?, ?, ?)");
     query.addBindValue(memberId);
     query.addBindValue(classId);
-    query.addBindValue(registrationDate);
+    query.addBindValue(QDate::currentDate()); // Using the current date for registration
 
     if (!query.exec()) {
-        qDebug() << "Register Class Error: " << query.lastError().text();
+        qDebug() << "Error registering for class: " << query.lastError().text();
         return false;
     }
+
     return true;
+}
+
+QSqlQuery DatabaseAPI::getClassRegistrations(int classId) {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM Class_Registrations WHERE class_id = ?");
+    query.addBindValue(classId);
+
+    if (!query.exec()) {
+        qDebug() << "Error fetching class registrations: " << query.lastError().text();
+    }
+
+    return query;
+}
+
+// Subscription-related operations
+bool DatabaseAPI::addSubscription(int memberId, const QString &type, const QString &status) {
+    QSqlQuery query;
+    query.prepare("INSERT INTO Subscriptions (member_id, type, status) VALUES (?, ?, ?)");
+    query.addBindValue(memberId);
+    query.addBindValue(type);
+    query.addBindValue(status);
+
+    if (!query.exec()) {
+        qDebug() << "Error adding subscription: " << query.lastError().text();
+        return false;
+    }
+
+    return true;
+}
+
+QSqlQuery DatabaseAPI::getMemberSubscriptions(int memberId) {
+    QSqlQuery query;
+    query.prepare("SELECT * FROM Subscriptions WHERE member_id = ?");
+    query.addBindValue(memberId);
+
+    if (!query.exec()) {
+        qDebug() << "Error fetching member subscriptions: " << query.lastError().text();
+    }
+
+    return query;
 }
