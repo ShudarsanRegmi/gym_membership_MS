@@ -1,31 +1,54 @@
 #ifndef DATABASEAPI_H
 #define DATABASEAPI_H
 
-#include <QObject>
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QVariant>
-#include <QVector>
-#include <QDebug>
 #include <QDate>
+#include <QMap>
+#include <QDebug>
 
-class DatabaseAPI : public QObject {
-    Q_OBJECT
-
+class DatabaseAPI {
 public:
-    explicit DatabaseAPI(QObject *parent = nullptr);
+    DatabaseAPI();
     ~DatabaseAPI();
 
-    bool connectToDatabase(const QString &host, const QString &dbName, const QString &user, const QString &password);
+    bool connectToDatabase(const QString &dbname);
+
+    // User-related operations
     bool addUser(const QString &username, const QString &password, const QString &email, const QString &role);
-    QVector<QVariantMap> getAllMembers();
-    bool addMember(int userId, const QString &firstName, const QString &lastName, const QDate &dob, const QString &phoneNumber,
-                   const QDate &membershipStart, const QDate &membershipEnd);
-    bool addAttendance(int memberId, const QDate &date, const QString &status);
-    bool addPayment(int memberId, double amount, const QDate &paymentDate, const QString &method);
-    bool addClass(const QString &className, const QString &instructor, const QDateTime &scheduleTime);
-    bool registerClass(int memberId, int classId, const QDate &registrationDate);
+    bool authenticateUser(const QString &username, const QString &password);
+    QSqlQuery getUserDetails(int userId);
+
+    // Member-related operations
+    bool addMember(int userId, const QString &firstName, const QString &lastName, const QDate &dob, const QString &phoneNumber, const QDate &startDate, const QDate &endDate);
+    bool updateMember(int memberId, const QMap<QString, QVariant> &updatedData);
+    QSqlQuery getMemberDetails(int memberId);
+    QSqlQuery getAllMembers();
+    bool deleteMember(int memberId);
+
+    // Attendance-related operations
+    bool markAttendance(int memberId, const QDate &date, const QString &status);
+    QSqlQuery getAttendanceRecordsByMember(int memberId);
+    QSqlQuery getAttendanceByDate(const QDate &date);
+
+    // Payment-related operations
+    bool addPayment(int memberId, double amount, const QDate &date, const QString &method);
+    QSqlQuery getPaymentRecords(int memberId);
+
+    // Class-related operations
+    bool addClass(const QString &name, const QString &instructor, const QDateTime &scheduleTime);
+    QSqlQuery getAllClasses();
+    QSqlQuery getClassDetails(int classId);
+
+    // Class registration-related operations
+    bool registerForClass(int memberId, int classId);
+    QSqlQuery getClassRegistrations(int classId);
+
+    // Subscription-related operations
+    bool addSubscription(int memberId, const QString &type, const QString &status);
+    QSqlQuery getMemberSubscriptions(int memberId);
 
 private:
     QSqlDatabase db;

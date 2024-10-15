@@ -1,16 +1,30 @@
-#ifndef REGISTER_H
-#define REGISTER_H
+#ifndef REGISTERPAGE_H
+#define REGISTERPAGE_H
 
 #include <QWidget>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QComboBox>
+#include <databaseapi.h>
 
 class RegisterPage : public QWidget
 {
     Q_OBJECT
 public:
-    explicit RegisterPage(QWidget *parent = nullptr);
+    explicit RegisterPage(DatabaseAPI *dbApi, QWidget *parent = nullptr);
 
 private:
-    int x = 5;
+    QLineEdit *usernameInput;
+    QLineEdit *passwordInput;
+    QLineEdit *emailInput;
+    QComboBox *roleComboBox;
+    QPushButton *registerButton;
+    DatabaseAPI *dbApi;
+
+
+
+private slots:
+    void onRegisterClicked();
 };
 
-#endif // REGISTER_H
+#endif // REGISTERPAGE_H

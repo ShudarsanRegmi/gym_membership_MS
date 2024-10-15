@@ -16,17 +16,31 @@
 #include "databaseapi.h"
 
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+MainWindow::MainWindow(DatabaseAPI *dbApi, QWidget *parent)
+    : QMainWindow(parent), dbApi(dbApi)
 {
     // making database connection
-    DatabaseAPI *conn = new DatabaseAPI;
-    if (conn->connectToDatabase("127.0.0.1", "gym_mgmt", "shudarsan", "shudarsan@localhost")) {
-        qDebug() << "Connection to the database was successfull...";
-    }else {
-        qDebug() << "Connection to the database failed...";
+    bool status = this->dbApi->connectToDatabase("gym_mgmt.db");
+
+    if (status) {
+        qDebug() << "Connection to the database was successful";
+    } else {
+        qDebug() << "Connection to the database failed";
     }
 
+
+
+    // if ( dbApi->addUser("shivalal","shivalalpass","chavi@lal.com","member")) {
+    //     qDebug() << "Creation of user harilal was successful...";
+    // }else{
+    //     qDebug() << "user creation failed";
+    // }
+
+    if (dbApi->addUser("chandu","chandupass","chandu@lal.com","member")) {
+        qDebug() << "Creation of user chandu was successful...";
+    }else{
+        qDebug() << "user creation failed";
+    }
 
 
     QWidget *centralWidget = new QWidget;
@@ -57,7 +71,7 @@ MainWindow::MainWindow(QWidget *parent)
     AttendanceTracking *attendanceTrackingPage = new AttendanceTracking;
     ViewSubscription *viewSubscriptionPage = new ViewSubscription;
     ScheduleClasses *scheduleClassPage = new ScheduleClasses;
-    RegisterPage *registerPage = new RegisterPage;
+    RegisterPage *registerPage = new RegisterPage(dbApi);
     SettingsPage *settingsPage = new SettingsPage;
     AdminPage *adminPage = new AdminPage;
 

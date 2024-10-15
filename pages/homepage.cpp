@@ -23,6 +23,7 @@ Homepage::Homepage(QWidget *parent) : QWidget(parent) {
         "margin-bottom: 20px;"
         "text-align: center;"
 
+
         );
     homePageTitle->setAlignment(Qt::AlignCenter);  // Center the title
 
@@ -52,7 +53,7 @@ Homepage::Homepage(QWidget *parent) : QWidget(parent) {
     // Add widgets to the layout
     homePageLayout->addWidget(homePageTitle);
     homePageLayout->addWidget(subTitle);
-    homePageLayout->addWidget(heroImageLabel);
+    // homePageLayout->addWidget(heroImageLabel);
     homePageLayout->addItem(spacer);
     homePageLayout->addWidget(ctaButton, 0, Qt::AlignCenter);
     homePageLayout->addItem(spacer);
