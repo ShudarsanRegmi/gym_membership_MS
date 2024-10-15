@@ -9,6 +9,7 @@
 #include <QMap>
 #include <QDebug>
 
+
 class DatabaseAPI {
 public:
     DatabaseAPI();
@@ -49,6 +50,9 @@ public:
     // Subscription-related operations
     bool addSubscription(int memberId, const QString &type, const QString &status);
     QSqlQuery getMemberSubscriptions(int memberId);
+
+    // added later
+    QVector<QVector<QString>> getUsers();
 
 private:
     QSqlDatabase db;

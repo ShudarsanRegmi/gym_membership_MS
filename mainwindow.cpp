@@ -73,7 +73,7 @@ MainWindow::MainWindow(DatabaseAPI *dbApi, QWidget *parent)
     ScheduleClasses *scheduleClassPage = new ScheduleClasses;
     RegisterPage *registerPage = new RegisterPage(dbApi);
     SettingsPage *settingsPage = new SettingsPage;
-    AdminPage *adminPage = new AdminPage;
+    AdminPage *adminPage = new AdminPage(dbApi);
 
 
     // QWidget *studentsPage = new QWidget;

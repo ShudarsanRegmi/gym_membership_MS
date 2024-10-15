@@ -310,3 +310,20 @@ QSqlQuery DatabaseAPI::getMemberSubscriptions(int memberId) {
 
     return query;
 }
+
+
+QVector<QVector<QString>> DatabaseAPI::getUsers() {
+    QVector<QVector<QString>> users;
+
+    QSqlQuery query("SELECT user_id, username, email FROM Users");
+
+    while (query.next()) {
+        QVector<QString> user;
+        user.push_back(query.value(0).toString()); // user_id
+        user.push_back(query.value(1).toString()); // username
+        user.push_back(query.value(2).toString()); // email
+        users.push_back(user);
+    }
+
+    return users;
+}
