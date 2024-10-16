@@ -90,6 +90,7 @@ CREATE TABLE GymDetails (
     FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
 );
 
+/*
 CREATE TABLE UserPersonalInfo (
     personal_info_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
@@ -103,6 +104,20 @@ CREATE TABLE UserPersonalInfo (
     phone_number TEXT,        -- Use TEXT instead of VARCHAR for phone number
     FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
 );
+*/
+CREATE TABLE UserPersonalInfo (
+    personal_info_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    full_name TEXT NOT NULL,  
+    father_name TEXT,
+    mother_name TEXT,
+    date_of_birth DATE NOT NULL,
+    gender TEXT NOT NULL CHECK(gender IN ('male', 'female', 'other')),
+    address TEXT,
+    phone_number TEXT,  
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
+);
+
 
 -- Insert into Users
 INSERT INTO Users (username, password, email, role) VALUES
@@ -191,13 +206,15 @@ INSERT INTO GymDetails (user_id, height_cm, weight_kg, body_fat_percentage, bmi,
 
 -- Insert into UserPersonalInfo
 INSERT INTO UserPersonalInfo (user_id, full_name, father_name, mother_name, date_of_birth, gender, address, phone_number) VALUES
-(1, 'John Doe', 'Robert Doe', 'Jane Doe', '1990-05-15', 'male', '123 Main St', '555-1234'),
-(2, 'Jane Doe', 'Richard Doe', 'Emily Doe', '1992-08-10', 'female', '456 Oak St', '555-5678'),
-(4, 'Mike Smith', 'William Smith', 'Anna Smith', '1985-03-22', 'male', '789 Pine St', '555-8765'),
-(5, 'Sara Jones', 'James Jones', 'Maria Jones', '1988-07-30', 'female', '321 Birch St', '555-4321'),
-(6, 'Chris Evans', 'David Evans', 'Laura Evans', '1995-02-18', 'male', '654 Maple St', '555-9876'),
-(7, 'Laura Lee', 'Joseph Lee', 'Alice Lee', '1993-09-25', 'female', '987 Cedar St', '555-2468'),
-(8, 'Daniel Brown', 'Henry Brown', 'Sophia Brown', '1990-11-17', 'male', '159 Spruce St', '555-1357'),
-(9, 'Kelly White', 'Thomas White', 'Nancy White', '1987-04-13', 'female', '753 Walnut St', '555-9753');
+(1, 'John Doe', 'Robert Doe', 'Nancy Doe', '1990-01-15', 'male', '123 Main St, Springfield', '1234567890'),
+(2, 'Jane Doe', 'Michael Doe', 'Lisa Doe', '1992-05-22', 'female', '456 Oak Ave, Springfield', '9876543210'),
+(3, 'Admin User', NULL, NULL, '1985-08-30', 'male', '789 Elm St, Springfield', '1122334455'),
+(4, 'Mike Smith', 'David Smith', 'Emma Smith', '1988-03-12', 'male', '321 Pine St, Springfield', '2233445566'),
+(5, 'Sara Jones', 'Brian Jones', 'Sophia Jones', '1995-07-09', 'female', '654 Maple St, Springfield', '3344556677'),
+(6, 'Chris Evans', 'William Evans', 'Olivia Evans', '1993-11-21', 'male', '987 Birch St, Springfield', '4455667788'),
+(7, 'Laura Lee', 'George Lee', 'Mia Lee', '1996-02-25', 'female', '147 Cedar St, Springfield', '5566778899'),
+(8, 'Daniel Brown', 'Richard Brown', 'Chloe Brown', '1991-09-17', 'male', '369 Willow St, Springfield', '6677889900'),
+(9, 'Kelly White', 'James White', 'Isabella White', '1994-12-04', 'female', '258 Poplar St, Springfield', '7788990011'),
+(10, 'Steve Black', 'Patrick Black', 'Ella Black', '1983-06-19', 'male', '147 Ash St, Springfield', '8899001122');
 
 
