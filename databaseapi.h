@@ -53,6 +53,9 @@ public:
 
     // added later
     QVector<QVector<QString>> getUsers();
+    QVector<QString> getUserGymDetails(const QString &userId);
+    QVector<QString> getUserPersonalInfo(const QString &userId);
+
 
 private:
     QSqlDatabase db;

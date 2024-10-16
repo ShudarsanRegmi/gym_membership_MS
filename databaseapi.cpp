@@ -327,3 +327,33 @@ QVector<QVector<QString>> DatabaseAPI::getUsers() {
 
     return users;
 }
+
+QVector<QString> DatabaseAPI::getUserGymDetails(const QString &userId) {
+    QVector<QString> gymDetails;
+    QSqlQuery query;
+    query.prepare("SELECT height, weight, ... FROM UserGymDetails WHERE user_id = :user_id");
+    query.bindValue(":user_id", userId);
+    if (query.exec()) {
+        while (query.next()) {
+            gymDetails.push_back(query.value(0).toString());  // Height
+            gymDetails.push_back(query.value(1).toString());  // Weight
+            // Add other details
+        }
+    }
+    return gymDetails;
+}
+QVector<QString> DatabaseAPI::getUserPersonalInfo(const QString &userId) {
+    QVector<QString> personalInfo;
+    QSqlQuery query;
+    query.prepare("SELECT full_name, father_name, ... FROM UserPersonalInfo WHERE user_id = :user_id");
+    query.bindValue(":user_id", userId);
+    if (query.exec()) {
+        while (query.next()) {
+            personalInfo.push_back(query.value(0).toString());  // Full Name
+            personalInfo.push_back(query.value(1).toString());  // Father's Name
+            // Add other personal details
+        }
+    }
+    return personalInfo;
+}
+
