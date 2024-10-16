@@ -3,6 +3,7 @@
 
 #include <QWidget>
 
+
 class Dashboard : public QWidget
 {
     Q_OBJECT

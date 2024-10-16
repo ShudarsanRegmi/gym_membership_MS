@@ -20,13 +20,13 @@ MainWindow::MainWindow(DatabaseAPI *dbApi, QWidget *parent)
     : QMainWindow(parent), dbApi(dbApi)
 {
     // making database connection
-    bool status = this->dbApi->connectToDatabase("gym_mgmt.db");
+    // bool status = this->dbApi->connectToDatabase("gym_mgmt.db");
 
-    if (status) {
-        qDebug() << "Connection to the database was successful";
-    } else {
-        qDebug() << "Connection to the database failed";
-    }
+    // if (status) {
+    //     qDebug() << "Connection to the database was successful";
+    // } else {
+    //     qDebug() << "Connection to the database failed";
+    // }
 
 
 
@@ -36,11 +36,11 @@ MainWindow::MainWindow(DatabaseAPI *dbApi, QWidget *parent)
     //     qDebug() << "user creation failed";
     // }
 
-    if (dbApi->addUser("chandu","chandupass","chandu@lal.com","member")) {
-        qDebug() << "Creation of user chandu was successful...";
-    }else{
-        qDebug() << "user creation failed";
-    }
+    // if (dbApi->addUser("chandu","chandupass","chandu@lal.com","member")) {
+    //     qDebug() << "Creation of user chandu was successful...";
+    // }else{
+    //     qDebug() << "user creation failed";
+    // }
 
 
     QWidget *centralWidget = new QWidget;
@@ -114,7 +114,6 @@ MainWindow::MainWindow(DatabaseAPI *dbApi, QWidget *parent)
     stackedWidget->addWidget(adminPage); // 5
     stackedWidget->addWidget(settingsPage); // 6
     stackedWidget->addWidget(registerPage); // 7
-
 
 
     // Add sidebar and central widget to the main layout

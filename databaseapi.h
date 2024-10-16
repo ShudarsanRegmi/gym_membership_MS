@@ -9,6 +9,18 @@
 #include <QMap>
 #include <QDebug>
 
+#include "models/user.h"
+
+
+struct MemberDetails {
+    QString firstName;
+    QString lastName;
+    QDate dateOfBirth;
+    QString phoneNumber;
+    QDate membershipStartDate;
+    QDate membershipEndDate;
+};
+
 
 class DatabaseAPI {
 public:
@@ -25,7 +37,7 @@ public:
     // Member-related operations
     bool addMember(int userId, const QString &firstName, const QString &lastName, const QDate &dob, const QString &phoneNumber, const QDate &startDate, const QDate &endDate);
     bool updateMember(int memberId, const QMap<QString, QVariant> &updatedData);
-    QSqlQuery getMemberDetails(int memberId);
+    MemberDetails getMemberDetails(int memberId);
     QSqlQuery getAllMembers();
     bool deleteMember(int memberId);
 
@@ -55,6 +67,7 @@ public:
     QVector<QVector<QString>> getUsers();
     QVector<QString> getUserGymDetails(const QString &userId);
     QVector<QString> getUserPersonalInfo(const QString &userId);
+    QVector<User*> getAllUsers();
 
 
 private:

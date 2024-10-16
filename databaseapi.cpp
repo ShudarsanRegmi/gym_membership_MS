@@ -1,5 +1,11 @@
 #include "databaseapi.h"
 
+#include "models/user.h"
+#include "models/adminuser.h"
+#include "models/memberuser.h"
+
+
+
 DatabaseAPI::DatabaseAPI() {
     db = QSqlDatabase::addDatabase("QSQLITE");
 }
@@ -112,17 +118,49 @@ bool DatabaseAPI::updateMember(int memberId, const QMap<QString, QVariant> &upda
     return true;
 }
 
-QSqlQuery DatabaseAPI::getMemberDetails(int memberId) {
+// QSqlQuery DatabaseAPI::getMemberDetails(int memberId) {
+//     QSqlQuery query;
+//     query.prepare("SELECT * FROM Members WHERE member_id = ?");
+//     query.addBindValue(memberId);
+
+//     if (!query.exec()) {
+//         qDebug() << "Error fetching member details: " << query.lastError().text();
+//     }
+
+//     return query;
+// }
+
+// first use of join
+
+MemberDetails DatabaseAPI::getMemberDetails(int userId) {
     QSqlQuery query;
-    query.prepare("SELECT * FROM Members WHERE member_id = ?");
-    query.addBindValue(memberId);
+    query.prepare(
+        "SELECT m.first_name, m.last_name, m.date_of_birth, m.phone_number, "
+        "m.membership_start_date, m.membership_end_date "
+        "FROM Members m "
+        "JOIN Users u ON u.user_id = m.user_id "
+        "WHERE u.user_id = ?"
+        );
+    query.addBindValue(userId);
 
     if (!query.exec()) {
         qDebug() << "Error fetching member details: " << query.lastError().text();
+        return {};  // Return an empty MemberDetails object in case of error
     }
 
-    return query;
+    MemberDetails memberDetails;
+    if (query.next()) {
+        memberDetails.firstName = query.value("first_name").toString();
+        memberDetails.lastName = query.value("last_name").toString();
+        memberDetails.dateOfBirth = query.value("date_of_birth").toDate();
+        memberDetails.phoneNumber = query.value("phone_number").toString();
+        memberDetails.membershipStartDate = query.value("membership_start_date").toDate();
+        memberDetails.membershipEndDate = query.value("membership_end_date").toDate();
+    }
+
+    return memberDetails;
 }
+
 
 QSqlQuery DatabaseAPI::getAllMembers() {
     QSqlQuery query("SELECT * FROM Members");
@@ -312,6 +350,27 @@ QSqlQuery DatabaseAPI::getMemberSubscriptions(int memberId) {
 }
 
 
+// Admin pages uses this function...
+// QVector<QVector<QString>> DatabaseAPI::getUsers() {
+//     QVector<QVector<QString>> users;
+
+//     QSqlQuery query("SELECT user_id, username, email FROM Users");
+//     QString MemberUser::getPhoneNumber() const {
+//         return phoneNumber;
+//     }
+
+//     while (query.next()) {
+//         QVector<QString> user;
+//         user.push_back(query.value(0).toString()); // user_id
+//         user.push_back(query.value(1).toString()); // username
+//         user.push_back(query.value(2).toString()); // email
+//         users.push_back(user);
+//     }
+
+//     return users;
+// }
+
+
 QVector<QVector<QString>> DatabaseAPI::getUsers() {
     QVector<QVector<QString>> users;
 
@@ -357,3 +416,38 @@ QVector<QString> DatabaseAPI::getUserPersonalInfo(const QString &userId) {
     return personalInfo;
 }
 
+
+
+// These methods are added later..
+
+QVector<User*> DatabaseAPI::getAllUsers() {
+    QVector<User*> users;
+
+    QSqlQuery query;
+    query.prepare("SELECT user_id, username, email, role FROM Users");
+
+    if (query.exec()) {
+        while (query.next()) {
+            QString userId = query.value(0).toString();
+            QString username = query.value(1).toString();
+            QString email = query.value(2).toString();
+            QString role = query.value(3).toString();
+
+            qDebug() << "userid = " << userId << "username = " << username << "email = " << email << "role = " << role;
+
+            if (role == "member") {
+                // Create a MemberUser object
+                qDebug() << "Here we'll update the user memebr";
+                users.append(new MemberUser(userId, username, email));
+            } else if (role == "admin") {
+                qDebug() << "Here we'll update the admin user lists";
+                // Create an AdminUser object
+                users.append(new AdminUser(userId, username, email));
+            }
+        }
+    } else {
+        qDebug() << "Error fetching users:" << query.lastError().text();
+    }
+    qDebug() << "returning from getAllUsers dbapi";
+    return users;
+}
