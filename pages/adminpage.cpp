@@ -58,8 +58,94 @@ void AdminPage::createUserManagementTab() {
     loadUserData();
 }
 
+// void AdminPage::createAttendanceReportTab() {
+//     attendanceReportTab = new QWidget(this);  // Initialize the attendance report tab
+//     QVBoxLayout *layout = new QVBoxLayout(attendanceReportTab);
+
+//     // Title
+//     QLabel *titleLabel = new QLabel("Attendance Report", attendanceReportTab);
+//     titleLabel->setStyleSheet("font-size: 20px; font-weight: bold;");
+//     layout->addWidget(titleLabel, 0, Qt::AlignCenter);
+
+//     // Date Range Selection
+//     QHBoxLayout *dateLayout = new QHBoxLayout();
+//     QLabel *fromLabel = new QLabel("From:", attendanceReportTab);
+//     QDateEdit *fromDateEdit = new QDateEdit(QDate::currentDate(), attendanceReportTab);
+//     fromDateEdit->setCalendarPopup(true);
+
+//     QLabel *toLabel = new QLabel("To:", attendanceReportTab);
+//     QDateEdit *toDateEdit = new QDateEdit(QDate::currentDate(), attendanceReportTab);
+//     toDateEdit->setCalendarPopup(true);
+
+//     dateLayout->addWidget(fromLabel);
+//     dateLayout->addWidget(fromDateEdit);
+//     dateLayout->addWidget(toLabel);
+//     dateLayout->addWidget(toDateEdit);
+
+//     layout->addLayout(dateLayout);
+
+//     // Filter Button
+//     QPushButton *filterButton = new QPushButton("Generate Report", attendanceReportTab);
+//     layout->addWidget(filterButton, 0, Qt::AlignCenter);
+
+//     // Connect button to a slot (you will implement this slot)
+//     connect(filterButton, &QPushButton::clicked, this, [this, fromDateEdit, toDateEdit]() {
+//         // Generate report functionality here
+//         // For example, load attendance data based on selected dates
+//         qDebug() << "Generate report from" << fromDateEdit->date() << "to" << toDateEdit->date();
+//     });
+
+//     // Attendance Table
+//     QTableWidget *attendanceTable = new QTableWidget(0, 4, attendanceReportTab);  // 4 columns: ID, Name, Date, Status
+//     attendanceTable->setHorizontalHeaderLabels({"ID", "Name", "Date", "Status"});
+//     attendanceTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+//     layout->addWidget(attendanceTable);
+
+//     // Optional: Add some dummy data for demonstration
+//     // This will be fetched from the database later...
+//     attendanceTable->insertRow(0);
+//     attendanceTable->setItem(0, 0, new QTableWidgetItem("1"));
+//     attendanceTable->setItem(0, 1, new QTableWidgetItem("Subramanian Aaiyer"));
+//     attendanceTable->setItem(0, 2, new QTableWidgetItem("2024-10-16"));
+//     attendanceTable->setItem(0, 3, new QTableWidgetItem("Present"));
+
+//     attendanceTable->insertRow(1);
+//     attendanceTable->setItem(1, 0, new QTableWidgetItem("2"));
+//     attendanceTable->setItem(1, 1, new QTableWidgetItem("Rashid Khan"));
+//     attendanceTable->setItem(1, 2, new QTableWidgetItem("2024-10-16"));
+//     attendanceTable->setItem(1, 3, new QTableWidgetItem("Absent"));
+
+//     attendanceTable->insertRow(2);
+//     attendanceTable->setItem(2, 0, new QTableWidgetItem("3"));
+//     attendanceTable->setItem(2, 1, new QTableWidgetItem("Palinasamy"));
+//     attendanceTable->setItem(2, 2, new QTableWidgetItem("2024-10-16"));
+//     attendanceTable->setItem(2, 3, new QTableWidgetItem("Absent"));
+
+//     attendanceTable->insertRow(3);
+//     attendanceTable->setItem(1, 0, new QTableWidgetItem("4"));
+//     attendanceTable->setItem(1, 1, new QTableWidgetItem("Murugan"));
+//     attendanceTable->setItem(1, 2, new QTableWidgetItem("2024-10-16"));
+//     attendanceTable->setItem(1, 3, new QTableWidgetItem("Absent"));
+
+//     attendanceTable->insertRow(4);
+//     attendanceTable->setItem(3, 0, new QTableWidgetItem("3"));
+//     attendanceTable->setItem(3, 1, new QTableWidgetItem("Sanjay"));
+//     attendanceTable->setItem(3, 2, new QTableWidgetItem("2024-10-16"));
+//     attendanceTable->setItem(3, 3, new QTableWidgetItem("Present"));
+
+//     attendanceTable->insertRow(5);
+//     attendanceTable->setItem(4, 0, new QTableWidgetItem("3"));
+//     attendanceTable->setItem(4, 1, new QTableWidgetItem("Harilal"));
+//     attendanceTable->setItem(4, 2, new QTableWidgetItem("2024-10-16"));
+//     attendanceTable->setItem(4, 3, new QTableWidgetItem("Present"));
+
+
+//     // Set the layout for the attendance report tab
+//     attendanceReportTab->setLayout(layout);
+// }
+
 void AdminPage::createAttendanceReportTab() {
-    attendanceReportTab = new QWidget(this);  // Initialize the attendance report tab
+    attendanceReportTab = new QWidget(this);
     QVBoxLayout *layout = new QVBoxLayout(attendanceReportTab);
 
     // Title
@@ -88,61 +174,38 @@ void AdminPage::createAttendanceReportTab() {
     QPushButton *filterButton = new QPushButton("Generate Report", attendanceReportTab);
     layout->addWidget(filterButton, 0, Qt::AlignCenter);
 
-    // Connect button to a slot (you will implement this slot)
-    connect(filterButton, &QPushButton::clicked, this, [this, fromDateEdit, toDateEdit]() {
-        // Generate report functionality here
-        // For example, load attendance data based on selected dates
-        qDebug() << "Generate report from" << fromDateEdit->date() << "to" << toDateEdit->date();
-    });
-
     // Attendance Table
     QTableWidget *attendanceTable = new QTableWidget(0, 4, attendanceReportTab);  // 4 columns: ID, Name, Date, Status
-    attendanceTable->setHorizontalHeaderLabels({"ID", "Name", "Date", "Status"});
+    attendanceTable->setHorizontalHeaderLabels({"Member ID", "Name", "Date", "Status"});
     attendanceTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     layout->addWidget(attendanceTable);
 
-    // Optional: Add some dummy data for demonstration
-    // This will be fetched from the database later...
-    attendanceTable->insertRow(0);
-    attendanceTable->setItem(0, 0, new QTableWidgetItem("1"));
-    attendanceTable->setItem(0, 1, new QTableWidgetItem("Subramanian Aaiyer"));
-    attendanceTable->setItem(0, 2, new QTableWidgetItem("2024-10-16"));
-    attendanceTable->setItem(0, 3, new QTableWidgetItem("Present"));
-
-    attendanceTable->insertRow(1);
-    attendanceTable->setItem(1, 0, new QTableWidgetItem("2"));
-    attendanceTable->setItem(1, 1, new QTableWidgetItem("Rashid Khan"));
-    attendanceTable->setItem(1, 2, new QTableWidgetItem("2024-10-16"));
-    attendanceTable->setItem(1, 3, new QTableWidgetItem("Absent"));
-
-    attendanceTable->insertRow(2);
-    attendanceTable->setItem(2, 0, new QTableWidgetItem("3"));
-    attendanceTable->setItem(2, 1, new QTableWidgetItem("Palinasamy"));
-    attendanceTable->setItem(2, 2, new QTableWidgetItem("2024-10-16"));
-    attendanceTable->setItem(2, 3, new QTableWidgetItem("Absent"));
-
-    attendanceTable->insertRow(3);
-    attendanceTable->setItem(1, 0, new QTableWidgetItem("4"));
-    attendanceTable->setItem(1, 1, new QTableWidgetItem("Murugan"));
-    attendanceTable->setItem(1, 2, new QTableWidgetItem("2024-10-16"));
-    attendanceTable->setItem(1, 3, new QTableWidgetItem("Absent"));
-
-    attendanceTable->insertRow(4);
-    attendanceTable->setItem(3, 0, new QTableWidgetItem("3"));
-    attendanceTable->setItem(3, 1, new QTableWidgetItem("Sanjay"));
-    attendanceTable->setItem(3, 2, new QTableWidgetItem("2024-10-16"));
-    attendanceTable->setItem(3, 3, new QTableWidgetItem("Present"));
-
-    attendanceTable->insertRow(5);
-    attendanceTable->setItem(4, 0, new QTableWidgetItem("3"));
-    attendanceTable->setItem(4, 1, new QTableWidgetItem("Harilal"));
-    attendanceTable->setItem(4, 2, new QTableWidgetItem("2024-10-16"));
-    attendanceTable->setItem(4, 3, new QTableWidgetItem("Present"));
-
-
     // Set the layout for the attendance report tab
     attendanceReportTab->setLayout(layout);
+
+    // Connect the filter button
+    connect(filterButton, &QPushButton::clicked, this, [=]() {
+        QString fromDate = fromDateEdit->date().toString("yyyy-MM-dd");
+        QString toDate = toDateEdit->date().toString("yyyy-MM-dd");
+
+        // Fetch attendance data from the database
+        QVector<QVector<QString>> attendanceData = dbApi->getAttendanceReport(fromDate, toDate);
+
+        // Clear the existing rows
+        attendanceTable->setRowCount(0);
+
+        // Insert fetched data into the table
+        for (const QVector<QString> &row : attendanceData) {
+            int rowIndex = attendanceTable->rowCount();
+            attendanceTable->insertRow(rowIndex);
+            attendanceTable->setItem(rowIndex, 0, new QTableWidgetItem(row[0]));  // Member ID
+            attendanceTable->setItem(rowIndex, 1, new QTableWidgetItem(row[1]));  // Name
+            attendanceTable->setItem(rowIndex, 2, new QTableWidgetItem(row[2]));  // Date
+            attendanceTable->setItem(rowIndex, 3, new QTableWidgetItem(row[3]));  // Status
+        }
+    });
 }
+
 
 void AdminPage::createStatisticsTab() {
     statisticsTab = new QWidget(this);  // Initialize the statistics tab

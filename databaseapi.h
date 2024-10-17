@@ -71,6 +71,7 @@ public:
 
     QVector<QString> getCompleteUserInfo(const QString &userID); // added for admin page functionality: aaja sajh
     bool updateUserDetails(const QString &userID, const QVector<QString> &updatedDetails);
+    QVector<QVector<QString>> getAttendanceReport(const QString &fromDate, const QString &toDate);
 
 
 private:

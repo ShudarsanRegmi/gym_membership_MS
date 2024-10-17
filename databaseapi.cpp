@@ -578,3 +578,43 @@ bool DatabaseAPI::updateUserDetails(const QString &userID, const QVector<QString
 
     return true;
 }
+
+
+// satrau din cha bajera aarthis min ma add gareko kina vanda attd lai kam garne banauna
+QVector<QVector<QString>> DatabaseAPI::getAttendanceReport(const QString &fromDate, const QString &toDate) {
+    QVector<QVector<QString>> attendanceData;
+
+    QSqlQuery query;
+    query.prepare(R"(
+    SELECT
+        m.member_id,
+        m.first_name || ' ' || m.last_name AS "Full Name",
+        a.date,
+        a.status
+    FROM
+        Attendance a
+    JOIN
+        Members m ON a.member_id = m.member_id
+    WHERE
+        a.date BETWEEN :fromDate AND :toDate
+    ORDER BY
+        a.date ASC;
+    )");
+    query.bindValue(":fromDate", fromDate);
+    query.bindValue(":toDate", toDate);
+
+    if (query.exec()) {
+        while (query.next()) {
+            QVector<QString> row;
+            row.append(query.value(0).toString());  // Member ID
+            row.append(query.value(1).toString());  // Full Name
+            row.append(query.value(2).toString());  // Date
+            row.append(query.value(3).toString());  // Status
+            attendanceData.append(row);
+        }
+    } else {
+        qDebug() << "Attendance report query failed: " << query.lastError();
+    }
+
+    return attendanceData;
+}
