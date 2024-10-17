@@ -154,14 +154,7 @@ INSERT INTO Members (user_id, first_name, last_name, date_of_birth, phone_number
 
 -- Insert into Attendance
 INSERT INTO Attendance (member_id, date, status) VALUES
-(1, '2024-10-10', 'present'),
-(2, '2024-10-10', 'present'),
-(4, '2024-10-10', 'absent'),
-(5, '2024-10-10', 'present'),
-(6, '2024-10-10', 'present'),
-(7, '2024-10-10', 'absent'),
-(8, '2024-10-10', 'present'),
-(9, '2024-10-10', 'present');
+INSERT INTO Attendance (member_id, date, status) VALUES(1, '2024-10-10', 'present'),(2, '2024-10-10', 'present'),(3, '2024-10-10', 'absent'),(4, '2024-10-10', 'present'),(5, '2024-10-10', 'present'),(6, '2024-10-10', 'absent'),(7, '2024-10-10', 'present'),(8, '2024-10-10', 'present'),(9, '2024-10-10', 'absent'),(10, '2024-10-10', 'present'),(1, '2024-10-11', 'present'),(2, '2024-10-11', 'absent'),(3, '2024-10-11', 'present'),(4, '2024-10-11', 'present'),(5, '2024-10-11', 'absent'),(6, '2024-10-11', 'present'),(7, '2024-10-11', 'present'),(8, '2024-10-11', 'absent'),(9, '2024-10-11', 'present'),(10, '2024-10-11', 'present'),(1, '2024-10-12', 'absent'),(2, '2024-10-12', 'present'),(3, '2024-10-12', 'present'),(4, '2024-10-12', 'absent'),(5, '2024-10-12', 'present'),(6, '2024-10-12', 'absent'),(7, '2024-10-12', 'present'),(8, '2024-10-12', 'present'),(9, '2024-10-12', 'absent'),(10, '2024-10-12', 'present'),(1, '2024-10-13', 'present'),(2, '2024-10-13', 'present'),(3, '2024-10-13', 'absent'),(4, '2024-10-13', 'present'),(5, '2024-10-13', 'absent'),(6, '2024-10-13', 'present'),(7, '2024-10-13', 'present'),(8, '2024-10-13', 'absent'),(9, '2024-10-13', 'present'),(10, '2024-10-13', 'absent'),(1, '2024-10-14', 'present'),(2, '2024-10-14', 'absent'),(3, '2024-10-14', 'present'),(4, '2024-10-14', 'absent'),(5, '2024-10-14', 'present'),(6, '2024-10-14', 'absent'),(7, '2024-10-14', 'present'),(8, '2024-10-14', 'present'),(9, '2024-10-14', 'absent'),(10, '2024-10-14', 'present'),(1, '2024-10-15', 'absent'),(2, '2024-10-15', 'present'),(3, '2024-10-15', 'present'),(4, '2024-10-15', 'present'),(5, '2024-10-15', 'absent'),(6, '2024-10-15', 'present'),(7, '2024-10-15', 'present'),(8, '2024-10-15', 'absent'),(9, '2024-10-15', 'present'),(10, '2024-10-15', 'present'),(1, '2024-10-16', 'present'),(2, '2024-10-16', 'present'),(3, '2024-10-16', 'absent'),(4, '2024-10-16', 'present'),(5, '2024-10-16', 'present'),(6, '2024-10-16', 'absent'),(7, '2024-10-16', 'present'),(8, '2024-10-16', 'present'),(9, '2024-10-16', 'absent'),(10, '2024-10-16', 'present'),(1, '2024-10-17', 'absent'),(2, '2024-10-17', 'present'),(3, '2024-10-17', 'present'),(4, '2024-10-17', 'absent'),(5, '2024-10-17', 'present'),(6, '2024-10-17', 'present'),(7, '2024-10-17', 'present'),(8, '2024-10-17', 'absent'),(9, '2024-10-17', 'present'),(10, '2024-10-17', 'absent');
 
 -- Insert into Payments
 INSERT INTO Payments (member_id, amount, payment_date, payment_method) VALUES
@@ -225,5 +218,11 @@ INSERT INTO UserPersonalInfo (user_id, full_name, father_name, mother_name, date
 (8, 'Daniel Brown', 'Richard Brown', 'Chloe Brown', '1991-09-17', 'male', '369 Willow St, Springfield', '6677889900'),
 (9, 'Kelly White', 'James White', 'Isabella White', '1994-12-04', 'female', '258 Poplar St, Springfield', '7788990011'),
 (10, 'Steve Black', 'Patrick Black', 'Ella Black', '1983-06-19', 'male', '147 Ash St, Springfield', '8899001122');
+
+/*
+-- Deleting all records and also reset the auto incre counter
+DELETE FROM Attendance;
+DELETE FROM sqlite_sequence WHERE name='Attendance';
+/*
 
 
