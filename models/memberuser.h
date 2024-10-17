@@ -3,6 +3,7 @@
 
 #include "user.h"
 #include <QString>
+#include <QList>
 
 class MemberUser : public User {
 private:
@@ -19,10 +20,14 @@ public:
     //            const QString& membershipEndDate);
     MemberUser(const QString& userid, const QString& username, const QString& email);
 
+    float attendace = 60.5;
+    float goalProgress = 20.5;
+
+    QList<QList<QString>> activities;
 
     void displayDetails() const override;
 
-    // Getters for member-specific details
+    // Getters for member-specific detail
     QString getFirstName() const;
     QString getLastName() const;
     QString getDateOfBirth() const;

@@ -10,11 +10,18 @@
 #include <QtCharts/QChartView>
 #include <QtCharts/QPieSeries>
 
-Dashboard::Dashboard(QWidget *parent) : QWidget(parent) {
+Dashboard::Dashboard(MemberUser *appuser, QWidget *parent) :  QWidget(parent), appuser(appuser) {
+
+    qDebug() << "Running dashboard...";
+    qDebug() << appuser->attendace;
+
+    // Debug to check the activities list
+    qDebug() << appuser->activities;
+
     QVBoxLayout *dashboardLayout = new QVBoxLayout(this);
 
     // Personalized Welcome Label
-    QLabel *welcomeLabel = new QLabel("Welcome back, Firstname Lastname", this);
+    QLabel *welcomeLabel = new QLabel("Welcome back, Firstname " + appuser->getUsername(), this);
     welcomeLabel->setStyleSheet("font-size: 24px; font-weight: bold;");
     dashboardLayout->addWidget(welcomeLabel);
 
@@ -23,11 +30,11 @@ Dashboard::Dashboard(QWidget *parent) : QWidget(parent) {
     QVBoxLayout *progressLayout = new QVBoxLayout;
 
     QProgressBar *attendanceProgress = new QProgressBar;
-    attendanceProgress->setValue(65);  // Example value
+    attendanceProgress->setValue(appuser->attendace);  // Example value
     attendanceProgress->setFormat("Attendance: %p%");
 
     QProgressBar *goalProgress = new QProgressBar;
-    goalProgress->setValue(80);  // Example value
+    goalProgress->setValue(appuser->goalProgress);  // Example value
     goalProgress->setFormat("Goal Progress: %p%");
 
     progressLayout->addWidget(attendanceProgress);
@@ -36,14 +43,16 @@ Dashboard::Dashboard(QWidget *parent) : QWidget(parent) {
     dashboardLayout->addWidget(progressBox);
 
     // Table for recent activity (workouts, payments, etc.)
-    QTableWidget *activityTable = new QTableWidget(3, 3, this);
+    QTableWidget *activityTable = new QTableWidget(appuser->activities.size(), 3, this);  // Dynamically set the row count based on activities list
     activityTable->setHorizontalHeaderLabels({"Date", "Activity", "Details"});
-    activityTable->setItem(0, 0, new QTableWidgetItem("2024-09-15"));
-    activityTable->setItem(0, 1, new QTableWidgetItem("Workout"));
-    activityTable->setItem(0, 2, new QTableWidgetItem("Chest Day - 60 mins"));
-    activityTable->setItem(1, 0, new QTableWidgetItem("2024-09-10"));
-    activityTable->setItem(1, 1, new QTableWidgetItem("Payment"));
-    activityTable->setItem(1, 2, new QTableWidgetItem("Subscription Renewal"));
+
+    // Populate the activity table dynamically from appuser->activities list
+    for (int i = 0; i < appuser->activities.size(); ++i) {
+        QList<QString> activity = appuser->activities[i];
+        activityTable->setItem(i, 0, new QTableWidgetItem(activity[0]));  // Date
+        activityTable->setItem(i, 1, new QTableWidgetItem(activity[1]));  // Activity
+        activityTable->setItem(i, 2, new QTableWidgetItem(activity[2]));  // Details
+    }
 
     dashboardLayout->addWidget(activityTable);
 

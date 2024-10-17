@@ -2,6 +2,7 @@
 #include <QApplication>
 #include "databaseapi.h"
 #include "./userBusinessLogic/userbusinesslogic.h"
+#include "models/memberuser.h"
 #include  <QDebug>
 
 int main(int argc, char *argv[])
@@ -19,6 +20,16 @@ int main(int argc, char *argv[])
         qDebug() << "Connection to the database failed";
     }
 
+    // User *appuser = new User(0, "harekrishna", "harekrishna@gmail.com", "userr");
+    MemberUser *appuser = new MemberUser(0, "haribahaadur", "harekrishna@gmail.com");
+    // These further details are to be fetched from the database...
+    qDebug () <<  appuser->getEmail(); // initialized..
+    qDebug () << appuser->getMembershipEndDate();
+    qDebug() << appuser->getDateOfBirth();
+    qDebug() << appuser->getPhoneNumber();
+    qDebug() << appuser->getRole(); // initialized
+    qDebug() << appuser->getUserId();
+
 
     // Instantiate UserBusinessLogic and pass the DatabaseAPI instance
     UserBusinessLogic *userLogic = new UserBusinessLogic(dbApi);
@@ -29,7 +40,7 @@ int main(int argc, char *argv[])
 
 
     // Initialize MainWindow and pass dbApi and userLogic if needed for UI interaction
-    MainWindow w(dbApi);
+    MainWindow w(appuser, dbApi);
     w.show();
 
     qDebug() << "main is going to terminate from here...";

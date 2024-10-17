@@ -241,11 +241,11 @@ void AdminPage::createStatisticsTab() {
 
     // Add dummy geographical data
     QVector<QStringList> geoData = {
-                                    {"New York", "50"},
-                                    {"Los Angeles", "30"},
-                                    {"Chicago", "20"},
-                                    {"Houston", "15"},
-                                    {"Phoenix", "10"},
+                                    {"Periyapalam", "50"},
+                                    {"Thiruninravur", "30"},
+                                    {"Chennai", "20"},
+                                    {"Thamrapipakkam", "15"},
+                                    {"Red Hills", "10"},
                                     };
 
     for (const QStringList &data : geoData) {

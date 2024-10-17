@@ -10,7 +10,19 @@
 //     membershipStartDate(membershipStartDate), membershipEndDate(membershipEndDate) {}
 
 MemberUser::MemberUser(const QString& userid, const QString& username, const QString& email )
-    : User(userid, username, email, "member") {}
+    : User(userid, username, email, "member") {
+
+    activities.append({"2024-09-15", "Workout", "Chest Day - 60 mins"});
+    activities.append({"2024-09-10", "Payment", "Subscription Renewal"});
+    activities.append({"2024-09-13", "Workout", "Chect Workout"});
+    activities.append({"2024-09-14", "Workout", "Abs Workout"});
+
+
+    qDebug() << "Executing constructor of member user function..";
+    qDebug() << attendace;
+    qDebug() << goalProgress;
+    qDebug() << activities;
+}
 
 // Display user details
 void MemberUser::displayDetails() const {

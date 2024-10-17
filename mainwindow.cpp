@@ -14,10 +14,11 @@
 #include "pages/adminpage.h"
 
 #include "databaseapi.h"
+#include "models/memberuser.h"
 
 
-MainWindow::MainWindow(DatabaseAPI *dbApi, QWidget *parent)
-    : QMainWindow(parent), dbApi(dbApi)
+MainWindow::MainWindow(MemberUser *appuser, DatabaseAPI *dbApi, QWidget *parent)
+    : appuser(appuser), QMainWindow(parent), dbApi(dbApi)
 {
     // making database connection
     // bool status = this->dbApi->connectToDatabase("gym_mgmt.db");
@@ -48,7 +49,7 @@ MainWindow::MainWindow(DatabaseAPI *dbApi, QWidget *parent)
 
 
     stackedWidget = new QStackedWidget;
-    Sidebar *sidebar = new Sidebar(this, stackedWidget);  // Pass 'this' as the parent
+    Sidebar *sidebar = new Sidebar(appuser, this, stackedWidget);  // Pass 'this' as the parent
 
     // Create pages (widgets)
     // QWidget *dashboardPage = new QWidget;
@@ -67,7 +68,7 @@ MainWindow::MainWindow(DatabaseAPI *dbApi, QWidget *parent)
     // homePage->setLayout(homePageLayout);
 
     Homepage *homePage = new Homepage;
-    Dashboard *dashboard = new Dashboard;
+    Dashboard *dashboard = new Dashboard(appuser);
     AttendanceTracking *attendanceTrackingPage = new AttendanceTracking;
     ViewSubscription *viewSubscriptionPage = new ViewSubscription;
     ScheduleClasses *scheduleClassPage = new ScheduleClasses;

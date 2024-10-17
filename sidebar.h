@@ -8,11 +8,15 @@
 #include <QLabel>
 #include <QStackedWidget>
 
+#include "models/memberuser.h"
+
+
 class Sidebar : public QWidget
 {
     Q_OBJECT
 public:
-    Sidebar(QWidget *parent = nullptr, QStackedWidget *stackedWidget=nullptr);
+    Sidebar(MemberUser *appuser, QWidget *parent = nullptr, QStackedWidget *stackedWidget=nullptr);
+    MemberUser *appuser;
 
 private:
     QVBoxLayout *layout;

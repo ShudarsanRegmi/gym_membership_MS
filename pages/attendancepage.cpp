@@ -12,8 +12,12 @@
 #include <QComboBox>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QDateEdit>
+#include <QHBoxLayout>
 
-AttendanceTracking::AttendanceTracking(QWidget *parent) : QWidget(parent) {
+#include "./models/memberuser.h"
+
+AttendanceTracking::AttendanceTracking(MemberUser *appuser,  QWidget *parent) : QWidget(parent), appuser(appuser) {
     QVBoxLayout *attendanceLayout = new QVBoxLayout(this);
 
     // Title for the page
@@ -26,24 +30,40 @@ AttendanceTracking::AttendanceTracking(QWidget *parent) : QWidget(parent) {
     attendanceCalendar->setGridVisible(true);
     attendanceLayout->addWidget(attendanceCalendar);
 
-    // Recent attendance table
-    QGroupBox *recentAttendanceBox = new QGroupBox("Recent Attendance Records", this);
+    // Button to check attendance for the selected date
+    QPushButton *checkAttendanceButton = new QPushButton("Check Attendance for Selected Date", this);
+    attendanceLayout->addWidget(checkAttendanceButton);
+
+    // Table for showing filtered attendance
+    QGroupBox *recentAttendanceBox = new QGroupBox("Filtered Attendance Records", this);
     QVBoxLayout *recentAttendanceLayout = new QVBoxLayout;
-
-    QTableWidget *attendanceTable = new QTableWidget(5, 3, this);
+    QTableWidget *attendanceTable = new QTableWidget(5, 3, this);  // Placeholder row count
     attendanceTable->setHorizontalHeaderLabels({"Date", "Attendance Status", "Duration (mins)"});
-    attendanceTable->setItem(0, 0, new QTableWidgetItem("2024-09-10"));
-    attendanceTable->setItem(0, 1, new QTableWidgetItem("Present"));
-    attendanceTable->setItem(0, 2, new QTableWidgetItem("60"));
-    attendanceTable->setItem(1, 0, new QTableWidgetItem("2024-09-09"));
-    attendanceTable->setItem(1, 1, new QTableWidgetItem("Absent"));
-    attendanceTable->setItem(2, 0, new QTableWidgetItem("2024-09-08"));
-    attendanceTable->setItem(2, 1, new QTableWidgetItem("Present"));
-    attendanceTable->setItem(2, 2, new QTableWidgetItem("45"));
-
     recentAttendanceLayout->addWidget(attendanceTable);
     recentAttendanceBox->setLayout(recentAttendanceLayout);
     attendanceLayout->addWidget(recentAttendanceBox);
+
+    // Date range selection for filtering attendance
+    QGroupBox *dateRangeBox = new QGroupBox("Filter Attendance by Date Range", this);
+    QHBoxLayout *dateRangeLayout = new QHBoxLayout;
+
+    QLabel *fromLabel = new QLabel("From:", this);
+    QDateEdit *fromDateEdit = new QDateEdit(QDate::currentDate(), this);
+    fromDateEdit->setCalendarPopup(true);
+
+    QLabel *toLabel = new QLabel("To:", this);
+    QDateEdit *toDateEdit = new QDateEdit(QDate::currentDate(), this);
+    toDateEdit->setCalendarPopup(true);
+
+    QPushButton *filterButton = new QPushButton("Filter Attendance", this);
+
+    dateRangeLayout->addWidget(fromLabel);
+    dateRangeLayout->addWidget(fromDateEdit);
+    dateRangeLayout->addWidget(toLabel);
+    dateRangeLayout->addWidget(toDateEdit);
+    dateRangeLayout->addWidget(filterButton);
+    dateRangeBox->setLayout(dateRangeLayout);
+    attendanceLayout->addWidget(dateRangeBox);
 
     // Add a bar chart to show attendance over time
     QGroupBox *attendanceChartBox = new QGroupBox("Attendance Overview", this);
@@ -80,23 +100,20 @@ AttendanceTracking::AttendanceTracking(QWidget *parent) : QWidget(parent) {
     attendanceChartBox->setLayout(chartLayout);
     attendanceLayout->addWidget(attendanceChartBox);
 
-    // Search bar and filters
-    QGroupBox *filterBox = new QGroupBox("Filter Attendance", this);
-    QVBoxLayout *filterLayout = new QVBoxLayout;
+    // Connect button to display selected date's attendance
+    connect(checkAttendanceButton, &QPushButton::clicked, this, [=]() {
+        QDate selectedDate = attendanceCalendar->selectedDate();
+        qDebug() << "Checking attendance for date:" << selectedDate.toString();
+        // Logic to query and populate attendanceTable based on selectedDate goes here
+    });
 
-    QLineEdit *searchBar = new QLineEdit;
-    searchBar->setPlaceholderText("Search attendance by date...");
-    QComboBox *filterCombo = new QComboBox;
-    filterCombo->addItems({"All", "Present", "Absent"});
-
-    filterLayout->addWidget(searchBar);
-    filterLayout->addWidget(filterCombo);
-    filterBox->setLayout(filterLayout);
-    attendanceLayout->addWidget(filterBox);
-
-    // Add a "Mark Attendance" button
-    QPushButton *markAttendanceButton = new QPushButton("Mark Today's Attendance", this);
-    attendanceLayout->addWidget(markAttendanceButton);
+    // Connect button to filter attendance between two dates
+    connect(filterButton, &QPushButton::clicked, this, [=]() {
+        QDate fromDate = fromDateEdit->date();
+        QDate toDate = toDateEdit->date();
+        qDebug() << "Filtering attendance from" << fromDate.toString() << "to" << toDate.toString();
+        // Logic to query and populate attendanceTable based on the date range goes here
+    });
 
     // Spacer at the bottom
     attendanceLayout->addStretch();
