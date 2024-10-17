@@ -69,6 +69,9 @@ public:
     QVector<QString> getUserPersonalInfo(const QString &userId);
     QVector<User*> getAllUsers();
 
+    QVector<QString> getCompleteUserInfo(const QString &userID); // added for admin page functionality: aaja sajh
+    bool updateUserDetails(const QString &userID, const QVector<QString> &updatedDetails);
+
 
 private:
     QSqlDatabase db;

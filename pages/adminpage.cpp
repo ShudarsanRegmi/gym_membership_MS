@@ -239,35 +239,187 @@ void AdminPage::handleAddUser() {
     qDebug() << "Add User functionality triggered";
 }
 
-void AdminPage::handleViewUser(int row) {
-    QVector<QString> userDetails = {
-        userTable->item(row, 0)->text(),
-        userTable->item(row, 1)->text(),
-        userTable->item(row, 2)->text(),
-        // Add more details as needed
-    };
+// void AdminPage::handleViewUser(int row) {
+//     QString userid = userTable->item(row, 0)->text();
 
-    UserViewDialog dialog(userDetails, this);
-    dialog.exec();
+//     QVector<QString> userDetails = {
+//         userTable->item(row, 0)->text(),
+//         userTable->item(row, 1)->text(),
+//         userTable->item(row, 2)->text();
+//         // Add more details as needed
+//     };
+
+//     UserViewDialog dialog(userDetails, this);
+//     dialog.exec();
+// }
+
+void AdminPage::handleViewUser(int row) {
+    QString userID = userTable->item(row, 0)->text();  // Get the user ID from the table
+
+    // Fetch complete user details from dbApi using the provided userID
+    QVector<QString> userDetails = dbApi->getCompleteUserInfo(userID);
+
+    qDebug() << "Came back to handle Viewwer func..";
+    qDebug() << userDetails;
+
+    if (userDetails.isEmpty()) {
+        QMessageBox::warning(this, "Error", "Unable to fetch user details.");
+        return;
+    }
+
+    // Create a detailed dialog to display the user's complete info
+    QDialog *userDetailsDialog = new QDialog(this);
+    userDetailsDialog->setWindowTitle("User Details");
+    userDetailsDialog->setMinimumSize(400, 300);  // Adjust the size as needed
+
+    QVBoxLayout *layout = new QVBoxLayout(userDetailsDialog);
+
+    // Add user details in a beautiful, organized way
+    QLabel *titleLabel = new QLabel("<h2>User Information</h2>", userDetailsDialog);
+    layout->addWidget(titleLabel, 0, Qt::AlignCenter);
+
+    QLabel *idLabel = new QLabel("User ID: " + userDetails[0], userDetailsDialog);
+    layout->addWidget(idLabel);
+
+    QLabel *usernameLabel = new QLabel("Username: " + userDetails[1], userDetailsDialog);
+    layout->addWidget(usernameLabel);
+
+    QLabel *emailLabel = new QLabel("Email: " + userDetails[2], userDetailsDialog);
+    layout->addWidget(emailLabel);
+
+    QLabel *fullNameLabel = new QLabel("Height " + userDetails[3], userDetailsDialog);
+    layout->addWidget(fullNameLabel);
+
+    QLabel *fatherNameLabel = new QLabel("Weight " + userDetails[4], userDetailsDialog);
+    layout->addWidget(fatherNameLabel);
+
+    QLabel *addressLabel = new QLabel("Full Name " + userDetails[5], userDetailsDialog);
+    layout->addWidget(addressLabel);
+
+    QLabel *phoneLabel = new QLabel("Father's name " + userDetails[6], userDetailsDialog);
+    layout->addWidget(phoneLabel);
+
+    QLabel *subscriptionLabel = new QLabel("Phone Number: " + userDetails[7], userDetailsDialog);
+    layout->addWidget(subscriptionLabel);
+
+    // QLabel *membershipDateLabel = new QLabel("Membership Date: " + userDetails[8], userDetailsDialog);
+    // layout->addWidget(membershipDateLabel);
+
+    // Add a close button
+    QPushButton *closeButton = new QPushButton("Close", userDetailsDialog);
+    layout->addWidget(closeButton, 0, Qt::AlignCenter);
+
+    connect(closeButton, &QPushButton::clicked, userDetailsDialog, &QDialog::accept);
+
+    // Show the dialog
+    userDetailsDialog->exec();
 }
+
+
+// void AdminPage::handleEditUser(int row) {
+//     QVector<QString> userDetails = {
+//         userTable->item(row, 0)->text(),
+//         userTable->item(row, 1)->text(),
+//         userTable->item(row, 2)->text(),
+//         // Add more details as needed
+//     };
 
 void AdminPage::handleEditUser(int row) {
-    QVector<QString> userDetails = {
-        userTable->item(row, 0)->text(),
-        userTable->item(row, 1)->text(),
-        userTable->item(row, 2)->text(),
-        // Add more details as needed
-    };
+    QString userID = userTable->item(row, 0)->text();  // Get the user ID from the table
 
-    UserEditDialog dialog(userDetails, this);
-    if (dialog.exec() == QDialog::Accepted) {
-        QVector<QString> updatedDetails = dialog.getUpdatedDetails();
-        userTable->item(row, 0)->setText(updatedDetails[0]);
-        userTable->item(row, 1)->setText(updatedDetails[1]);
-        userTable->item(row, 2)->setText(updatedDetails[2]);
-        // Update the database if needed
+    // Fetch the user details from the database
+    QVector<QString> userDetails = dbApi->getCompleteUserInfo(userID);
+
+    if (userDetails.isEmpty()) {
+        QMessageBox::warning(this, "Error", "Unable to fetch user details.");
+        return;
     }
+
+    // Create a dialog for editing user details
+    QDialog *editDialog = new QDialog(this);
+    editDialog->setWindowTitle("Edit User Details");
+
+    QVBoxLayout *layout = new QVBoxLayout(editDialog);
+
+    QLabel *titleLabel = new QLabel("<h2>Edit User Information</h2>", editDialog);
+    layout->addWidget(titleLabel, 0, Qt::AlignCenter);
+
+    QLineEdit *usernameEdit = new QLineEdit(userDetails[1], editDialog); // Username
+    QLineEdit *emailEdit = new QLineEdit(userDetails[2], editDialog); // Email
+    QLineEdit *heightEdit = new QLineEdit(userDetails[3], editDialog); // Height
+    QLineEdit *weightEdit = new QLineEdit(userDetails[4], editDialog); // Weight
+    QLineEdit *fullNameEdit = new QLineEdit(userDetails[5], editDialog); // Full Name
+    QLineEdit *fatherNameEdit = new QLineEdit(userDetails[6], editDialog); // Father's Name
+    QLineEdit *phoneNumberEdit = new QLineEdit(userDetails[7], editDialog); // Phone Number
+
+    // Add QLineEdits to layout
+    layout->addWidget(new QLabel("Username:"));
+    layout->addWidget(usernameEdit);
+    layout->addWidget(new QLabel("Email:"));
+    layout->addWidget(emailEdit);
+    layout->addWidget(new QLabel("Height:"));
+    layout->addWidget(heightEdit);
+    layout->addWidget(new QLabel("Weight:"));
+    layout->addWidget(weightEdit);
+    layout->addWidget(new QLabel("Full Name:"));
+    layout->addWidget(fullNameEdit);
+    layout->addWidget(new QLabel("Father's Name:"));
+    layout->addWidget(fatherNameEdit);
+    layout->addWidget(new QLabel("Phone Number:"));
+    layout->addWidget(phoneNumberEdit);
+
+    // Add buttons
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
+    QPushButton *updateButton = new QPushButton("Update", editDialog);
+    QPushButton *cancelButton = new QPushButton("Cancel", editDialog);
+    buttonLayout->addWidget(updateButton);
+    buttonLayout->addWidget(cancelButton);
+    layout->addLayout(buttonLayout);
+
+    // Handle "Cancel" button
+    connect(cancelButton, &QPushButton::clicked, editDialog, &QDialog::reject);
+
+    // Handle "Update" button
+    connect(updateButton, &QPushButton::clicked, [=]() {
+        // Get the updated details from the QLineEdit widgets
+        QVector<QString> updatedDetails = {
+            usernameEdit->text(),
+            emailEdit->text(),
+            heightEdit->text(),
+            weightEdit->text(),
+            fullNameEdit->text(),
+            fatherNameEdit->text(),
+            phoneNumberEdit->text()
+        };
+
+        // Update the database using dbApi
+        if (dbApi->updateUserDetails(userID, updatedDetails)) {
+            // Update the userTable to reflect changes
+            userTable->item(row, 1)->setText(updatedDetails[0]); // Username
+            userTable->item(row, 2)->setText(updatedDetails[1]); // Email
+
+            editDialog->accept(); // Close the dialog
+           QMessageBox::information(editDialog, "Update Successful", "User information was updated successfully.");
+        } else {
+            QMessageBox::warning(editDialog, "Error", "Failed to update user details.");
+        }
+    });
+
+    // Show the dialog
+    editDialog->exec();
 }
+
+
+
+//     UserEditDialog dialog(userDetails, this);
+//     if (dialog.exec() == QDialog::Accepted) {
+//         QVector<QString> updatedDetails = dialog.getUpdatedDetails();
+//         userTable->item(row, 0)->setText(updatedDetails[0]);
+//         userTable->item(row, 1)->setText(updatedDetails[1]);
+//         userTable->item(row, 2)->setText(updatedDetails[2]);
+//         // Update the database if needed
+//     }
+// }
 
 // UserViewDialog implementation
 UserViewDialog::UserViewDialog(const QVector<QString>& userDetails, QWidget *parent) : QDialog(parent) {

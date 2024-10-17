@@ -24,6 +24,7 @@ SOURCES += \
     pages/viewsubscription.cpp \
     pages/settingspage.cpp \
     sidebar.cpp \
+    userBusinessLogic/userauthentication.cpp \
     userBusinessLogic/userbusinesslogic.cpp
 
 HEADERS += \
@@ -41,6 +42,7 @@ HEADERS += \
     pages/viewsubscription.h \
     pages/settingspage.h \
     sidebar.h \
+    userBusinessLogic/userauthentication.h \
     userBusinessLogic/userbusinesslogic.h
 
 # Default rules for deployment.

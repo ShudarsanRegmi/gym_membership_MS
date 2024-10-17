@@ -401,6 +401,7 @@ QVector<QString> DatabaseAPI::getUserGymDetails(const QString &userId) {
     }
     return gymDetails;
 }
+
 QVector<QString> DatabaseAPI::getUserPersonalInfo(const QString &userId) {
     QVector<QString> personalInfo;
     QSqlQuery query;
@@ -450,4 +451,130 @@ QVector<User*> DatabaseAPI::getAllUsers() {
     }
     qDebug() << "returning from getAllUsers dbapi";
     return users;
+}
+
+// Added for making user view and edit functional
+
+QVector<QString> DatabaseAPI::getCompleteUserInfo(const QString &userID) {
+    QVector<QString> userInfo;
+
+    QSqlQuery query;
+
+    qDebug() << "user id = " << userID;
+
+    // Query with JOINs to gather all required information
+    query.prepare(R"(
+    SELECT
+        u.user_id,
+        u.username,
+        u.email,
+        g.height_cm AS height,
+        g.weight_kg AS weight,
+        p.full_name,
+        p.father_name,
+        p.phone_number
+    FROM
+        Users u
+    LEFT JOIN
+        GymDetails g ON u.user_id = g.user_id
+    LEFT JOIN
+        UserPersonalInfo p ON u.user_id = p.user_id
+    WHERE
+        u.user_id = :userID;
+    )");
+    query.bindValue(":userID", userID);
+
+    if (query.exec()) {
+        qDebug() << "query might have executed successfully..";
+        if (query.next()) {
+            userInfo.append(query.value(0).toString()); // ID
+            userInfo.append(query.value(1).toString()); // Username
+            userInfo.append(query.value(2).toString()); // Email
+            userInfo.append(query.value(3).toString()); // Height
+            userInfo.append(query.value(4).toString()); // Weight
+            userInfo.append(query.value(5).toString()); // Full Name
+            userInfo.append(query.value(6).toString()); // Father's Name
+            userInfo.append(query.value(7).toString()); // Phone Number
+        }
+    } else {
+        qDebug() << "Database query failed: " << query.lastError();
+    }
+    qDebug() << userInfo;
+
+    return userInfo;
+}
+
+// QVector<QVector<QString>> DatabaseAPI::getUsers() {
+//     QVector<QVector<QString>> users;
+//     QSqlQuery query("SELECT id, username, email FROM Users");
+
+//     while (query.next()) {
+//         QVector<QString> user;
+//         user.append(query.value(0).toString());
+//         user.append(query.value(1).toString());
+//         user.append(query.value(2).toString());
+//         users.append(user);
+//     }
+//     return users;
+// }
+
+
+
+// satra bihana.. cha bajey add gareko...
+bool DatabaseAPI::updateUserDetails(const QString &userID, const QVector<QString> &updatedDetails) {
+    QSqlQuery query;
+
+    // Update Users table
+    query.prepare(R"(
+        UPDATE Users
+        SET username = :username, email = :email
+        WHERE user_id = :userID;
+    )");
+    query.bindValue(":username", updatedDetails[0]);
+    query.bindValue(":email", updatedDetails[1]);
+    query.bindValue(":userID", userID);
+
+    if (!query.exec()) {
+        qDebug() << "Users table update failed: " << query.lastError();
+        return false;
+    }else{
+        qDebug() << "Users table update success";
+    }
+
+    // Update GymDetails table
+    query.prepare(R"(
+        UPDATE GymDetails
+        SET height_cm = :height, weight_kg = :weight
+        WHERE user_id = :userID;
+    )");
+    query.bindValue(":height", updatedDetails[2]);
+    query.bindValue(":weight", updatedDetails[3]);
+    query.bindValue(":userID", userID);
+
+    if (!query.exec()) {
+        qDebug() << "GymDetails table update failed: " << query.lastError();
+        return false;
+    }else{
+        qDebug() << "Gym details update query";
+    }
+
+    // Update UserPersonalInfo table
+    query.prepare(R"(
+        UPDATE UserPersonalInfo
+        SET full_name = :full_name, father_name = :father_name, phone_number = :phone_number
+        WHERE user_id = :userID;
+    )");
+    query.bindValue(":full_name", updatedDetails[4]);
+    query.bindValue(":father_name", updatedDetails[5]);
+    query.bindValue(":phone_number", updatedDetails[6]);
+    query.bindValue(":userID", userID);
+
+    if (!query.exec()) {
+        qDebug() << "UserPersonalInfo table update failed: " << query.lastError();
+        return false;
+    }else{
+        qDebug() << "Userpersonal info updated..";
+    }
+
+    return true;
 }

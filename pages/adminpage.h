@@ -23,6 +23,7 @@ class UserEditDialog : public QDialog {
 public:
     explicit UserEditDialog(const QVector<QString>& userDetails, QWidget *parent = nullptr);
     QVector<QString> getUpdatedDetails();
+
 };
 
 class AdminPage : public QWidget
