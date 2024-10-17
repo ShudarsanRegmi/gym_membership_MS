@@ -69,7 +69,7 @@ MainWindow::MainWindow(MemberUser *appuser, DatabaseAPI *dbApi, QWidget *parent)
 
     Homepage *homePage = new Homepage;
     Dashboard *dashboard = new Dashboard(appuser);
-    AttendanceTracking *attendanceTrackingPage = new AttendanceTracking;
+    AttendanceTracking *attendanceTrackingPage = new AttendanceTracking(appuser, dbApi);
     ViewSubscription *viewSubscriptionPage = new ViewSubscription;
     ScheduleClasses *scheduleClassPage = new ScheduleClasses;
     RegisterPage *registerPage = new RegisterPage(dbApi);

@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     }
 
     // User *appuser = new User(0, "harekrishna", "harekrishna@gmail.com", "userr");
-    MemberUser *appuser = new MemberUser(0, "haribahaadur", "harekrishna@gmail.com");
+    MemberUser *appuser = new MemberUser("1", "haribahaadur", "harekrishna@gmail.com");
     // These further details are to be fetched from the database...
     qDebug () <<  appuser->getEmail(); // initialized..
     qDebug () << appuser->getMembershipEndDate();

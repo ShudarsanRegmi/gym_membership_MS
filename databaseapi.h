@@ -73,6 +73,12 @@ public:
     bool updateUserDetails(const QString &userID, const QVector<QString> &updatedDetails);
     QVector<QVector<QString>> getAttendanceReport(const QString &fromDate, const QString &toDate);
 
+    // added at dash archalis to make attendance page functional..
+    QVector<QVector<QString>> getAttendanceForDate(const QString &userId, const QDate &date);
+    QVector<QVector<QString>> getAttendanceBetweenDates(const QString &userId, const QDate &fromDate, const QDate &toDate);
+
+
+
 
 private:
     QSqlDatabase db;

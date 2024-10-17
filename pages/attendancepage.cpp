@@ -14,10 +14,14 @@
 #include <QPushButton>
 #include <QDateEdit>
 #include <QHBoxLayout>
-
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QDebug>
+#include <QHeaderView>
 #include "./models/memberuser.h"
+#include "../databaseapi.h"
 
-AttendanceTracking::AttendanceTracking(MemberUser *appuser,  QWidget *parent) : QWidget(parent), appuser(appuser) {
+AttendanceTracking::AttendanceTracking(MemberUser *appuser, DatabaseAPI *dbApi,  QWidget *parent) : QWidget(parent), appuser(appuser), dbApi(dbApi) {
     QVBoxLayout *attendanceLayout = new QVBoxLayout(this);
 
     // Title for the page
@@ -37,8 +41,12 @@ AttendanceTracking::AttendanceTracking(MemberUser *appuser,  QWidget *parent) : 
     // Table for showing filtered attendance
     QGroupBox *recentAttendanceBox = new QGroupBox("Filtered Attendance Records", this);
     QVBoxLayout *recentAttendanceLayout = new QVBoxLayout;
-    QTableWidget *attendanceTable = new QTableWidget(5, 3, this);  // Placeholder row count
-    attendanceTable->setHorizontalHeaderLabels({"Date", "Attendance Status", "Duration (mins)"});
+    QTableWidget *attendanceTable = new QTableWidget(0, 2, this);  // Placeholder row count
+    attendanceTable->setHorizontalHeaderLabels({"Date", "Attendance Status"});
+    // Resize columns to fit header contents
+    attendanceTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    attendanceTable->horizontalHeader()->setMinimumSectionSize(50);  // Optional minimum width for better usability
+
     recentAttendanceLayout->addWidget(attendanceTable);
     recentAttendanceBox->setLayout(recentAttendanceLayout);
     attendanceLayout->addWidget(recentAttendanceBox);
@@ -103,19 +111,35 @@ AttendanceTracking::AttendanceTracking(MemberUser *appuser,  QWidget *parent) : 
     // Connect button to display selected date's attendance
     connect(checkAttendanceButton, &QPushButton::clicked, this, [=]() {
         QDate selectedDate = attendanceCalendar->selectedDate();
-        qDebug() << "Checking attendance for date:" << selectedDate.toString();
-        // Logic to query and populate attendanceTable based on selectedDate goes here
+        QString userId = appuser->getUserId();
+
+        QVector<QVector<QString>> attendanceData = dbApi->getAttendanceForDate(userId, selectedDate);
+        qDebug() << "Attendace data...";
+        qDebug () << attendanceData;
+        populateAttendanceTable(attendanceTable, attendanceData);
     });
 
     // Connect button to filter attendance between two dates
     connect(filterButton, &QPushButton::clicked, this, [=]() {
         QDate fromDate = fromDateEdit->date();
         QDate toDate = toDateEdit->date();
-        qDebug() << "Filtering attendance from" << fromDate.toString() << "to" << toDate.toString();
-        // Logic to query and populate attendanceTable based on the date range goes here
+        QString userId = appuser->getUserId();
+
+        QVector<QVector<QString>> attendanceData = dbApi->getAttendanceBetweenDates(userId, fromDate, toDate);
+        populateAttendanceTable(attendanceTable, attendanceData);
     });
 
     // Spacer at the bottom
     attendanceLayout->addStretch();
     setLayout(attendanceLayout);
+}
+
+// Helper function to populate the attendance table
+void AttendanceTracking::populateAttendanceTable(QTableWidget *attendanceTable, const QVector<QVector<QString>> &data) {
+    attendanceTable->setRowCount(data.size());
+    for (int i = 0; i < data.size(); ++i) {
+        attendanceTable->setItem(i, 0, new QTableWidgetItem(data[i][0]));  // Date
+        attendanceTable->setItem(i, 1, new QTableWidgetItem(data[i][1]));  // Status
+        // attendanceTable->setItem(i, 2, new QTableWidgetItem(data[i][2]));  // Duration
+    }
 }

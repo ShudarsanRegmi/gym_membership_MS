@@ -618,3 +618,53 @@ QVector<QVector<QString>> DatabaseAPI::getAttendanceReport(const QString &fromDa
 
     return attendanceData;
 }
+
+
+QVector<QVector<QString>> DatabaseAPI::getAttendanceForDate(const QString &userId, const QDate &date) {
+    QVector<QVector<QString>> result;
+    QSqlQuery query;
+
+    query.prepare("SELECT date, status FROM Attendance WHERE member_id = :userId AND date = :date");
+    query.bindValue(":userId", userId);
+    query.bindValue(":date", date.toString("yyyy-MM-dd"));
+
+    if (query.exec()) {
+        while (query.next()) {
+            QVector<QString> row;
+            row.append(query.value(0).toString());  // Date
+            row.append(query.value(1).toString());  // Status
+            result.append(row);
+        }
+    } else {
+        qDebug() << "Error fetching attendance for date:" << query.lastError().text();
+    }
+
+    return result;
+}
+
+
+QVector<QVector<QString>> DatabaseAPI::getAttendanceBetweenDates(const QString &userId, const QDate &fromDate, const QDate &toDate) {
+    QVector<QVector<QString>> result;
+    QSqlQuery query;
+
+    query.prepare("SELECT date, status FROM Attendance WHERE member_id = :userId AND date BETWEEN :fromDate AND :toDate");
+    query.bindValue(":userId", userId);
+    query.bindValue(":fromDate", fromDate.toString("yyyy-MM-dd"));
+    query.bindValue(":toDate", toDate.toString("yyyy-MM-dd"));
+
+    if (query.exec()) {
+        while (query.next()) {
+            QVector<QString> row;
+            row.append(query.value(0).toString());  // Date
+            row.append(query.value(1).toString());  // Status
+            result.append(row);
+        }
+    } else {
+        qDebug() << "Error fetching attendance between dates:" << query.lastError().text();
+    }
+
+    return result;
+}
+
+
+
