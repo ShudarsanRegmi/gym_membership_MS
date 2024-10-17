@@ -90,6 +90,15 @@ CREATE TABLE GymDetails (
     FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
 );
 
+CREATE TABLE Activities (
+    activity_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    activity_type TEXT NOT NULL CHECK(activity_type IN ('workout', 'payment', 'attendance', 'subscription', 'class_registration')),
+    activity_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    description TEXT,  -- Optional field to describe the activity
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
+);
+
 /*
 CREATE TABLE UserPersonalInfo (
     personal_info_id INTEGER PRIMARY KEY AUTOINCREMENT,
