@@ -7,7 +7,11 @@
 #include <QDebug>
 
 
-Sidebar::Sidebar(QWidget *parent, QStackedWidget *stackedWidget) : QWidget(parent), stackedWidget(stackedWidget) {
+
+Sidebar::Sidebar(MemberUser *appuser, QWidget *parent, QStackedWidget *stackedWidget) : appuser(appuser), QWidget(parent), stackedWidget(stackedWidget) {
+
+    qDebug() << appuser->getEmail() << appuser->getRole();
+
     this->setObjectName("sidebarWidget");
 
     QVBoxLayout *sidebarLayout = new QVBoxLayout(this);  // Set the layout directly to the Sidebar widget
@@ -17,7 +21,7 @@ Sidebar::Sidebar(QWidget *parent, QStackedWidget *stackedWidget) : QWidget(paren
     profilePic->setPixmap(QPixmap(":/assets/images/profile.png").scaled(200, 200));
     profilePic->setAlignment(Qt::AlignCenter);
 
-    QLabel *profileName = new QLabel("Firstname Lastname");
+    QLabel *profileName = new QLabel(appuser->getUsername());
     profileName->setAlignment(Qt::AlignCenter);
     profileName->setStyleSheet("color: black; font-size: 14px;");
 

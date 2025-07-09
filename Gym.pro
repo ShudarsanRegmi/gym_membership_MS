@@ -10,6 +10,9 @@ CONFIG += c++17
 
 SOURCES += \
     databaseapi.cpp \
+    models/adminuser.cpp \
+    models/memberuser.cpp \
+    models/user.cpp \
     pages/adminpage.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -20,10 +23,15 @@ SOURCES += \
     pages/scheduleclasspaage.cpp \
     pages/viewsubscription.cpp \
     pages/settingspage.cpp \
-    sidebar.cpp
+    sidebar.cpp \
+    userBusinessLogic/userauthentication.cpp \
+    userBusinessLogic/userbusinesslogic.cpp
 
 HEADERS += \
     databaseapi.h \
+    models/adminuser.h \
+    models/memberuser.h \
+    models/user.h \
     pages/adminpage.h \
     mainwindow.h \
     pages/attendancepage.h \
@@ -33,7 +41,9 @@ HEADERS += \
     pages/scheduleclasspaage.h \
     pages/viewsubscription.h \
     pages/settingspage.h \
-    sidebar.h
+    sidebar.h \
+    userBusinessLogic/userauthentication.h \
+    userBusinessLogic/userbusinesslogic.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

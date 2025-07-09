@@ -14,19 +14,34 @@
 #include "pages/adminpage.h"
 
 #include "databaseapi.h"
+#include "models/memberuser.h"
 
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+MainWindow::MainWindow(MemberUser *appuser, DatabaseAPI *dbApi, QWidget *parent)
+    : appuser(appuser), QMainWindow(parent), dbApi(dbApi)
 {
     // making database connection
-    DatabaseAPI *conn = new DatabaseAPI;
-    if (conn->connectToDatabase("127.0.0.1", "gym_mgmt", "shudarsan", "shudarsan@localhost")) {
-        qDebug() << "Connection to the database was successfull...";
-    }else {
-        qDebug() << "Connection to the database failed...";
-    }
+    // bool status = this->dbApi->connectToDatabase("gym_mgmt.db");
 
+    // if (status) {
+    //     qDebug() << "Connection to the database was successful";
+    // } else {
+    //     qDebug() << "Connection to the database failed";
+    // }
+
+
+
+    // if ( dbApi->addUser("shivalal","shivalalpass","chavi@lal.com","member")) {
+    //     qDebug() << "Creation of user harilal was successful...";
+    // }else{
+    //     qDebug() << "user creation failed";
+    // }
+
+    // if (dbApi->addUser("chandu","chandupass","chandu@lal.com","member")) {
+    //     qDebug() << "Creation of user chandu was successful...";
+    // }else{
+    //     qDebug() << "user creation failed";
+    // }
 
 
     QWidget *centralWidget = new QWidget;
@@ -34,7 +49,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     stackedWidget = new QStackedWidget;
-    Sidebar *sidebar = new Sidebar(this, stackedWidget);  // Pass 'this' as the parent
+    Sidebar *sidebar = new Sidebar(appuser, this, stackedWidget);  // Pass 'this' as the parent
 
     // Create pages (widgets)
     // QWidget *dashboardPage = new QWidget;
@@ -53,13 +68,13 @@ MainWindow::MainWindow(QWidget *parent)
     // homePage->setLayout(homePageLayout);
 
     Homepage *homePage = new Homepage;
-    Dashboard *dashboard = new Dashboard;
-    AttendanceTracking *attendanceTrackingPage = new AttendanceTracking;
+    Dashboard *dashboard = new Dashboard(appuser);
+    AttendanceTracking *attendanceTrackingPage = new AttendanceTracking(appuser, dbApi);
     ViewSubscription *viewSubscriptionPage = new ViewSubscription;
     ScheduleClasses *scheduleClassPage = new ScheduleClasses;
-    RegisterPage *registerPage = new RegisterPage;
+    RegisterPage *registerPage = new RegisterPage(dbApi);
     SettingsPage *settingsPage = new SettingsPage;
-    AdminPage *adminPage = new AdminPage;
+    AdminPage *adminPage = new AdminPage(dbApi);
 
 
     // QWidget *studentsPage = new QWidget;
@@ -100,7 +115,6 @@ MainWindow::MainWindow(QWidget *parent)
     stackedWidget->addWidget(adminPage); // 5
     stackedWidget->addWidget(settingsPage); // 6
     stackedWidget->addWidget(registerPage); // 7
-
 
 
     // Add sidebar and central widget to the main layout
